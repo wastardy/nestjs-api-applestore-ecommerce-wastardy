@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  apple-database:
+    image: postgres:13
+    container_name: postgres
+    env_file:
+      - .env
+    ports:
+      - ${DB_PORT:-5433}:5432
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
