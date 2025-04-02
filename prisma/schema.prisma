@@ -15,18 +15,19 @@ datasource db {
 
 model User {
   id       String @id @default(uuid())
-  username String
-
-  firstName String?
-  lastName  String?
 
   email    String @unique
   password String
+
+  firstName String?
+  lastName  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   products Product[]
+  
+  @@map("users")
 }
 
 model Product {
@@ -40,4 +41,6 @@ model Product {
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("products")
 }
