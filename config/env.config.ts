@@ -7,7 +7,9 @@ const envSchema = zod.object({
 
   BASE_URL: zod.string().optional().default('http://localhost:3000'),
 
-  DB_PORT: zod.number().optional().default(5432),
+  DB_PORT: zod
+    .preprocess((val) => Number(val), zod.number().optional())
+    .default(5432),
   DB_HOST: zod.string().default('localhost'),
   DB_USER: zod.string().default('postgres'),
   DB_PASSWORD: zod.string().default('postgres'),
