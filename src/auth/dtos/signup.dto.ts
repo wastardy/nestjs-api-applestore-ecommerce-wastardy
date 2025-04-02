@@ -12,11 +12,6 @@ import {
 
 export class SignupDto {
   @IsNotEmpty()
-  @IsString()
-  @Transform(({ value }) => value?.trim())
-  readonly username: string;
-
-  @IsNotEmpty()
   @IsEmail()
   @Transform(({ value }) => value.trim().toLowerCase())
   readonly email: string;
