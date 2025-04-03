@@ -1,8 +1,13 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
 import * as bcryptjs from 'bcryptjs';
 import errorConstants from '../constants/error.constants';
 import { UserService } from 'src/user/user.service';
+import { SigninDto } from './dtos/signin.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
@@ -42,9 +47,37 @@ export class AuthService {
     };
   }
 
+  async signin(siginpDto: SigninDto) {
+    const user = await this.validateUser(siginpDto);
+    const token = await this.generateToken(user);
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+      token,
+    };
+  }
+
   private async hashPassword(password: string): Promise<string> {
     const salt = await bcryptjs.genSalt(10);
     return bcryptjs.hash(password, salt);
+  }
+
+  private async validateUser(userDto: SigninDto): Promise<User> {
+    const { email, password } = userDto;
+
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) throw new UnauthorizedException(errorConstants.USER_NOT_FOUND);
+
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
+
+    if (!isPasswordValid)
+      throw new UnauthorizedException(errorConstants.USER_NOT_AUTHORIZED);
+
+    return user;
   }
 
   private async generateToken(user: User): Promise<{ access_token: string }> {
