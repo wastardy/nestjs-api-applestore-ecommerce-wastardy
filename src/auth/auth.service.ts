@@ -80,7 +80,7 @@ export class AuthService {
     return user;
   }
 
-  private async generateToken(user: User): Promise<{ access_token: string }> {
+  private async generateToken(user: User): Promise<string> {
     const payload = {
       id: user.id,
       email: user.email,
@@ -91,8 +91,6 @@ export class AuthService {
       secret: this.configService.get<string>('JWT_SECRET_KEY'),
     });
 
-    return {
-      access_token: token,
-    };
+    return token;
   }
 }
