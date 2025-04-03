@@ -12,16 +12,13 @@ export class UserService {
   }
 
   async createUser(signupDto: SignupDto): Promise<User> {
-    const user: User = await this.prismaService.user.create({
+    return this.prismaService.user.create({
       data: {
-        username: signupDto.username,
         email: signupDto.email,
         password: signupDto.password,
         firstName: signupDto.firstName,
         lastName: signupDto.lastName,
       },
     });
-
-    return user;
   }
 }
