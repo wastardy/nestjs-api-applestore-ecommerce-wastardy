@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
@@ -8,7 +10,14 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({ where: { email } });
+    const user = await this.prismaService.user.findUnique({ where: { email } });
+
+    if (user) {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword as User;
+    }
+
+    return user;
   }
 
   async createUser(signupDto: SignupDto): Promise<User> {
